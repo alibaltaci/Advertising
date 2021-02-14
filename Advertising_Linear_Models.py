@@ -237,3 +237,15 @@ y_pred = lasso_tuned.predict(X_test)
 np.sqrt(mean_squared_error(y_test, y_pred))
 pd.Series(lasso_tuned.coef_, index=X_train.columns)
 
+
+# ElasticNet REGRESSION
+df = load_advertising()
+X = df.drop('sales', axis=1)
+y = df[["sales"]]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=46)
+enet_model = ElasticNet().fit(X_train, y_train)
+y_pred = enet_model.predict(X_test)
+np.sqrt(mean_squared_error(y_test, y_pred))
+
+
+
