@@ -247,5 +247,21 @@ enet_model = ElasticNet().fit(X_train, y_train)
 y_pred = enet_model.predict(X_test)
 np.sqrt(mean_squared_error(y_test, y_pred))
 
+# MODEL TUNING WITH GRIDSEARCHCV
+enet_params = {"l1_ratio": [0.1, 0.4, 0.5, 0.6, 0.8, 1],
+               "alpha": [0.1, 0.01, 0.001, 0.2, 0.3, 0.5, 0.8, 0.9, 1]}
+
+enet_model = ElasticNet()
+
+gs_cv_enet = GridSearchCV(enet_model, enet_params, cv=10).fit(X_train, y_train)
+
+gs_cv_enet.best_params_
+
+enet_tuned = ElasticNet(**gs_cv_enet.best_params_).fit(X_train, y_train)
+
+y_pred = enet_tuned.predict(X_test)
+np.sqrt(mean_squared_error(y_test, y_pred))
+
+
 
 
