@@ -125,5 +125,34 @@ np.sqrt(mean_squared_error(y_train, y_pred))
 y_pred = reg_model.predict(X_test)
 np.sqrt(mean_squared_error(y_test, y_pred))
 
+# K-FOLD CV
+reg_model = LinearRegression()
+
+# WAY 1: Using all data to calculate the error.
+-cross_val_score(reg_model, X, y, cv=10, scoring="neg_mean_squared_error")
+
+np.mean(-cross_val_score(reg_model, X, y, cv=10, scoring="neg_mean_squared_error"))
+np.std(-cross_val_score(reg_model, X, y, cv=10, scoring="neg_mean_squared_error"))
+# rmse
+np.mean(np.sqrt(-cross_val_score(reg_model, X, y, cv=10, scoring="neg_mean_squared_error")))
+
+
+# WAY 2: Separating the data as Train-Test, applying CV to the Train set and testing with the test set.
+X_train, X_test, y_train, y_test = train_test_split(X,
+                                                    y,
+                                                    test_size=0.20,
+                                                    random_state=24)
+
+reg_model = LinearRegression()
+reg_model.fit(X_train, y_train)
+
+# Validation Error
+np.mean(np.sqrt(-cross_val_score(reg_model, X_train, y_train, cv=10, scoring="neg_mean_squared_error")))
+
+y_pred = reg_model.predict(X_test)
+
+# Test Error
+np.sqrt(mean_squared_error(y_test, y_pred))
+
 
 
