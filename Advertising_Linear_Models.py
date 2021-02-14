@@ -105,7 +105,7 @@ df.describe()
 X_train, X_test, y_train, y_test = train_test_split(X,
                                                     y,
                                                     test_size=0.20,
-                                                    random_state=24)
+                                                    random_state=42)
 
 X_train.head()
 y_train.head()
@@ -141,7 +141,7 @@ np.mean(np.sqrt(-cross_val_score(reg_model, X, y, cv=10, scoring="neg_mean_squar
 X_train, X_test, y_train, y_test = train_test_split(X,
                                                     y,
                                                     test_size=0.20,
-                                                    random_state=24)
+                                                    random_state=42)
 
 reg_model = LinearRegression()
 reg_model.fit(X_train, y_train)
@@ -154,5 +154,51 @@ y_pred = reg_model.predict(X_test)
 # Test Error
 np.sqrt(mean_squared_error(y_test, y_pred))
 
+# RIDGE REGRESSION
+df = load_advertising()
+df.head()
+
+X = df.drop('sales', axis=1)
+y = df[["sales"]]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+
+# MODEL
+ridge_model = Ridge().fit(X_train, y_train)
+ridge_model.coef_
+ridge_model.intercept_
+ridge_model.alpha
+
+# Predictive
+
+# Train Error
+y_pred = ridge_model.predict(X_train)
+np.sqrt(mean_squared_error(y_train, y_pred))
+
+# Test Error
+y_pred = ridge_model.predict(X_test)
+np.sqrt(mean_squared_error(y_test, y_pred))
+
+# MODEL TUNING
+alphas = 10 ** np.linspace(10, -2, 100) * 0.5
+ridge_model = Ridge()
+coefs = []
+
+for i in alphas:
+    ridge_model.set_params(alpha=i)
+    ridge_model.fit(X_train, y_train)
+    y_pred = ridge_model.predict(X_test)
+    print(np.sqrt(mean_squared_error(y_test, y_pred)))
+
+ridge_params = {"alpha": 10 ** np.linspace(10, -2, 100) * 0.5}
+ridge_model = Ridge()
+gs_cv_ridge = GridSearchCV(ridge_model, ridge_params, cv=10).fit(X_train, y_train)
+gs_cv_ridge.best_params_
+
+# FINAL MODEL
+ridge_tuned = Ridge(**gs_cv_ridge.best_params_).fit(X_train, y_train)
+y_pred = ridge_tuned.predict(X_test)
+np.sqrt(mean_squared_error(y_test, y_pred))
+pd.Series(ridge_tuned.coef_, index=X_train.columns)
 
 
