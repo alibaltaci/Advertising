@@ -202,3 +202,38 @@ np.sqrt(mean_squared_error(y_test, y_pred))
 pd.Series(ridge_tuned.coef_, index=X_train.columns)
 
 
+# LASSO REGRESSION
+
+# MODEL
+df = load_advertising()
+X = df.drop('sales', axis=1)
+y = df[["sales"]]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+X_train.head()
+
+lasso_model = Lasso().fit(X_train, y_train)
+lasso_model.intercept_
+lasso_model.coef_
+
+# Predictive
+
+# Train Error
+lasso_model.predict(X_train)
+y_pred = lasso_model.predict(X_train)
+np.sqrt(mean_squared_error(y_train, y_pred))
+
+# Test Error
+lasso_model.predict(X_test)
+y_pred = lasso_model.predict(X_test)
+np.sqrt(mean_squared_error(y_test, y_pred))
+
+# MODEL TUNING
+lasso_param = {"alpha": 10 ** np.linspace(10, -2, 100) * 0.5}
+lasso_model = Lasso()
+gs_cv_lasso = GridSearchCV(lasso_model, lasso_param, cv=10).fit(X_train, y_train)
+gs_cv_lasso.best_params_
+lasso_tuned = Lasso(**gs_cv_lasso.best_params_).fit(X_train, y_train)
+y_pred = lasso_tuned.predict(X_test)
+np.sqrt(mean_squared_error(y_test, y_pred))
+pd.Series(lasso_tuned.coef_, index=X_train.columns)
+
