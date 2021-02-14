@@ -263,5 +263,30 @@ y_pred = enet_tuned.predict(X_test)
 np.sqrt(mean_squared_error(y_test, y_pred))
 
 
+# BASE MODELS
+df = load_advertising()
+X = df.drop('sales', axis=1)
+y = df[["sales"]]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=46)
+
+models = [('LinearRegression', LinearRegression()),
+          ('Ridge', Ridge()),
+          ('Lasso', Lasso()),
+          ('ElasticNet', ElasticNet())]
+
+# evaluate each model in turn
+results = []
+names = []
+
+for name, model in models:
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    result = np.sqrt(mean_squared_error(y_test, y_pred))
+    results.append(result)
+    names.append(name)
+    msg = "%s: %f" % (name, result)
+    print(msg)
+
+
 
 
