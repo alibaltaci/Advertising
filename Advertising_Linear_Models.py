@@ -101,4 +101,29 @@ rmse = np.sqrt(mse)
 df.describe()
 
 
+# HOLDOUT METHOD
+X_train, X_test, y_train, y_test = train_test_split(X,
+                                                    y,
+                                                    test_size=0.20,
+                                                    random_state=24)
+
+X_train.head()
+y_train.head()
+X_test.head()
+y_test.head()
+
+X_train.shape
+X_test.shape
+
+# Train Error
+reg_model = LinearRegression()
+reg_model.fit(X_train, y_train)
+y_pred = reg_model.predict(X_train)
+np.sqrt(mean_squared_error(y_train, y_pred))
+
+# Test
+y_pred = reg_model.predict(X_test)
+np.sqrt(mean_squared_error(y_test, y_pred))
+
+
 
